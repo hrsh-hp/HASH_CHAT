@@ -37,6 +37,7 @@ const App: React.FC = () => {
   const [peerId, setPeerId] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [incomingConnection, setIncomingConnection] = useState<DataConnection | null>(null);
   
   const peerRef = useRef<Peer | null>(null);
   const connRef = useRef<DataConnection | null>(null);
@@ -276,11 +277,13 @@ const App: React.FC = () => {
     });
 
     peer.on('connection', (conn) => {
-      if (connRef.current) {
-        conn.close();
-        addLog('Rejected concurrent connection attempt', 'warning');
+      // If we are already connected or connecting, show a dialog to the user
+      if (connRef.current || statusRef.current === ConnectionStatus.CONNECTED || statusRef.current === ConnectionStatus.CONNECTING) {
+        addLog(`Incoming handshake request from: ${conn.peer}`, 'warning');
+        setIncomingConnection(conn);
         return;
       }
+
       setupConnection(conn);
       addLog(`Incoming handshake from: ${conn.peer}`, 'warning');
     });
@@ -381,8 +384,69 @@ const App: React.FC = () => {
     }
   };
 
+  const activeConnectionId = connRef.current?.peer || 'UNKNOWN';
+
+  const handleAcceptIncoming = () => {
+    if (incomingConnection) {
+      addLog('Terminating current session to accept incoming connection...', 'info');
+      // Close current
+      if (connRef.current) {
+        connRef.current.close();
+        connRef.current = null;
+      }
+      
+      // Accept new
+      setStatus(ConnectionStatus.READY); // Reset status briefly
+      setupConnection(incomingConnection);
+      setIncomingConnection(null);
+    }
+  };
+
+  const handleRejectIncoming = () => {
+    if (incomingConnection) {
+       addLog(`Rejected connection request from: ${incomingConnection.peer}`, 'warning');
+       incomingConnection.close();
+       setIncomingConnection(null);
+    }
+  };
+
   return (
     <TerminalLayout>
+      {/* Incoming Connection Modal */}
+      {incomingConnection && (
+        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="border border-[#33ff33] bg-black p-4 lg:p-6 max-w-sm w-full shadow-[0_0_30px_rgba(51,255,51,0.2)]">
+            <h3 className="text-[#33ff33] font-bold text-lg lg:text-xl mb-4 tracking-widest border-b border-[#33ff33] pb-2 text-center glitch-text" data-text="INCOMING CONNECTION">
+              INCOMING CONNECTION
+            </h3>
+            
+            <div className="space-y-4 mb-6 text-sm font-mono text-[#1a801a]">
+              <p>
+                Remote node <span className="text-[#33ff33] font-bold">[{incomingConnection.peer}]</span> is attempting to establish a link.
+              </p>
+              <div className="border border-red-500/50 p-2 text-red-400 text-xs">
+                WARNING: Current session with <span className="font-bold">{activeConnectionId}</span> will be terminated.
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button 
+                onClick={handleAcceptIncoming}
+                className="flex-1 bg-[#33ff33] text-black font-bold py-2 px-4 hover:bg-[#2adb2a] transition-colors uppercase tracking-wider text-xs lg:text-sm"
+              >
+                Accept & Switch
+              </button>
+              <button 
+                onClick={handleRejectIncoming}
+                className="flex-1 border border-red-500 text-red-500 font-bold py-2 px-4 hover:bg-red-500 hover:text-white transition-colors uppercase tracking-wider text-xs lg:text-sm"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="flex items-center justify-between border-b border-[#33ff33]/50 pb-2 mb-2 lg:pb-4 lg:mb-4 select-none shrink-0 h-10 lg:h-16 relative z-30">
         <div className="flex items-center gap-3 overflow-hidden min-w-0">
