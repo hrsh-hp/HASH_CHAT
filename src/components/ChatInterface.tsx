@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Cpu, Paperclip, File as FileIcon, Download, Upload, Loader2, CheckCheck, Trash2, Zap, Reply, X, Edit2 } from 'lucide-react';
+import { Send, Cpu, Paperclip, File as FileIcon, Download, Upload, Loader2, CheckCheck, Trash2, Zap, Reply, X } from 'lucide-react';
 import type { Message, ReplyContext } from '../types';
 
 interface ChatInterfaceProps {
   messages: Message[];
   onSendMessage: (msg: string, replyTo?: ReplyContext) => void;
-  onEditMessage?: (id: string, newContent: string) => void;
-  onDeleteMessage?: (id: string) => void;
   onSendFile: (file: File) => void;
   onClearChat: () => void;
   onTyping: (isTyping: boolean) => void;
@@ -30,8 +28,6 @@ const QUICK_MACROS = [
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
   messages, 
   onSendMessage, 
-  onEditMessage,
-  onDeleteMessage,
   onSendFile, 
   onClearChat,
   onTyping,
@@ -42,7 +38,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [showMacros, setShowMacros] = useState(false);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -57,7 +52,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isRemoteTyping, replyingTo, editingId]);
+  }, [messages, isRemoteTyping, replyingTo]);
 
   // Click outside to close macro menu
   useEffect(() => {
@@ -74,7 +69,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setInputValue(e.target.value);
     
     // Handle typing indicator
-    if (!disabled && !editingId) {
+    if (!disabled) {
       onTyping(true);
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
@@ -92,44 +87,28 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const handleReply = (msg: Message) => {
     setReplyingTo(msg);
-    setEditingId(null);
     setInputValue('');
     inputRef.current?.focus();
   };
 
-  const handleEdit = (msg: Message) => {
-    if (msg.type === 'text') {
-      setEditingId(msg.id);
-      setInputValue(msg.content);
-      setReplyingTo(null);
-      inputRef.current?.focus();
-    }
-  };
-
-  const cancelReplyOrEdit = () => {
+  const cancelReply = () => {
     setReplyingTo(null);
-    setEditingId(null);
     setInputValue('');
   };
 
   const submitMessage = (content: string) => {
     if (content.trim() && !disabled) {
-      if (editingId && onEditMessage) {
-        onEditMessage(editingId, content);
-        setEditingId(null);
-      } else {
-        let replyContext: ReplyContext | undefined;
-        
-        if (replyingTo) {
-          replyContext = {
-            id: replyingTo.id,
-            sender: replyingTo.sender,
-            content: replyingTo.type === 'file' ? `[FILE] ${replyingTo.file?.name}` : replyingTo.content.substring(0, 50) + (replyingTo.content.length > 50 ? '...' : '')
-          };
-        }
-
-        onSendMessage(content, replyContext);
+      let replyContext: ReplyContext | undefined;
+      
+      if (replyingTo) {
+        replyContext = {
+          id: replyingTo.id,
+          sender: replyingTo.sender,
+          content: replyingTo.type === 'file' ? `[FILE] ${replyingTo.file?.name}` : replyingTo.content.substring(0, 50) + (replyingTo.content.length > 50 ? '...' : '')
+        };
       }
+
+      onSendMessage(content, replyContext);
       
       setInputValue('');
       setReplyingTo(null);
@@ -368,38 +347,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     )}
 
                     {/* Action Buttons (Desktop Hover) */}
-                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                      {isMe && msg.type === 'text' && (
-                        <button 
-                          onClick={() => handleEdit(msg)}
-                          className="p-1 hover:text-[#33ff33] hover:bg-[#1a801a]/20 rounded"
-                          title="Edit"
-                        >
-                          <Edit2 size={12} />
-                        </button>
-                      )}
-                      {isMe && onDeleteMessage && (
-                        <button 
-                          onClick={() => onDeleteMessage(msg.id)}
-                          className="p-1 hover:text-red-500 hover:bg-red-500/10 rounded"
-                          title="Delete"
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      )}
+                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
                       <button 
                         onClick={() => handleReply(msg)}
-                        className="p-1 hover:text-[#33ff33] hover:bg-[#1a801a]/20 rounded"
+                        className="p-1 text-[#33ff33] bg-black border border-[#1a801a] hover:bg-[#1a801a]/40 rounded shadow-md"
                         title="Reply"
                       >
                         <Reply size={12} />
                       </button>
                     </div>
 
-                    {/* Mobile Actions Overlay (Simple fallback) */}
-                    <div className="lg:hidden absolute top-2 right-2 opacity-50 flex gap-2">
-                       {isMe && msg.type === 'text' && <button onClick={() => handleEdit(msg)}><Edit2 size={12} /></button>}
-                       <button onClick={() => handleReply(msg)}><Reply size={12} /></button>
+                    {/* Mobile Actions Overlay */}
+                    <div className="lg:hidden absolute top-2 right-2 opacity-70 flex gap-2 z-10">
+                       <button 
+                         onClick={() => handleReply(msg)}
+                         className="p-1 bg-black/80 border border-[#1a801a] text-[#33ff33] rounded"
+                       >
+                         <Reply size={12} />
+                       </button>
                     </div>
                   </>
                 )}
@@ -426,23 +391,21 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         )}
       </div>
 
-      {/* Reply/Edit Banner */}
-      {(replyingTo || editingId) && (
+      {/* Reply Banner */}
+      {replyingTo && (
         <div className="bg-[#1a801a]/20 border-t border-x border-[#33ff33] p-2 flex justify-between items-center animate-in slide-in-from-bottom-2 mx-2 -mb-px relative z-30 backdrop-blur-sm">
            <div className="flex items-center gap-2 overflow-hidden">
-              {editingId ? <Edit2 size={14} className="text-[#33ff33] shrink-0" /> : <Reply size={14} className="text-[#33ff33] shrink-0" />}
+              <Reply size={14} className="text-[#33ff33] shrink-0" />
               <div className="flex flex-col min-w-0">
                  <span className="text-[10px] text-[#33ff33] font-bold">
-                    {editingId ? 'EDITING MESSAGE' : `REPLYING TO ${replyingTo?.sender === 'local' ? 'LOCAL' : 'REMOTE'}`}
+                    REPLYING TO {replyingTo.sender === 'local' ? 'LOCAL' : 'REMOTE'}
                  </span>
-                 {!editingId && (
-                   <span className="text-xs text-[#33ff33]/70 truncate font-mono">
-                     {replyingTo?.type === 'file' ? `[FILE] ${replyingTo?.file?.name}` : replyingTo?.content}
-                   </span>
-                 )}
+                 <span className="text-xs text-[#33ff33]/70 truncate font-mono">
+                   {replyingTo.type === 'file' ? `[FILE] ${replyingTo.file?.name}` : replyingTo.content}
+                 </span>
               </div>
            </div>
-           <button onClick={cancelReplyOrEdit} className="text-[#33ff33] hover:text-white p-1">
+           <button onClick={cancelReply} className="text-[#33ff33] hover:text-white p-1">
              <X size={16} />
            </button>
         </div>
@@ -503,7 +466,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             value={inputValue}
             onChange={handleInputChange}
             disabled={disabled}
-            placeholder={disabled ? "CONNECTION REQUIRED" : editingId ? "EDIT MESSAGE..." : "ENTER DATA... (*bold* _italic_)"}
+            placeholder={disabled ? "CONNECTION REQUIRED" : "ENTER DATA... (*bold* _italic_)"}
             className="flex-1 bg-transparent border-none outline-none text-[#33ff33] font-mono placeholder-[#1a801a] text-sm lg:text-base min-w-0"
             autoFocus
           />
@@ -512,7 +475,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             disabled={disabled || !inputValue.trim()}
             className="p-2 text-[#33ff33] hover:text-white disabled:opacity-30 disabled:hover:text-[#33ff33] transition-colors border border-transparent hover:border-[#33ff33] rounded-sm"
           >
-            {editingId ? <CheckCheck size={18} className="lg:w-5 lg:h-5" /> : <Send size={18} className="lg:w-5 lg:h-5" />}
+            <Send size={18} className="lg:w-5 lg:h-5" />
           </button>
         </form>
       </div>

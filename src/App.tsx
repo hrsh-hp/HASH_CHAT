@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Peer } from 'peerjs';
+                              import { Peer } from 'peerjs';
 import type { DataConnection } from 'peerjs';
 import { TerminalLayout } from './components/TerminalLayout';
 import { ConnectionManager } from './components/ConnectionManager';
@@ -124,22 +124,6 @@ const App: React.FC = () => {
           return;
         }
 
-        // Handle Edit
-        if (data.type === 'edit') {
-           setMessages(prev => prev.map(msg => 
-             msg.id === data.messageId ? { ...msg, content: data.content, isEdited: true } : msg
-           ));
-           return;
-        }
-
-        // Handle Delete
-        if (data.type === 'delete') {
-           setMessages(prev => prev.map(msg => 
-             msg.id === data.messageId ? { ...msg, isDeleted: true } : msg
-           ));
-           return;
-        }
-
         if (data.type === 'text') {
            setIsRemoteTyping(false); 
            setMessages(prev => [...prev, {
@@ -212,6 +196,19 @@ const App: React.FC = () => {
     try {
       const conn = peerRef.current.connect(targetId);
       setupConnection(conn);
+
+      // Timeout safety net (10 seconds)
+      setTimeout(() => {
+        if (statusRef.current === ConnectionStatus.CONNECTING) {
+          addLog('Connection timed out. Remote host unresponsive or busy.', 'error');
+          if (conn) {
+            conn.close();
+          }
+          setStatus(ConnectionStatus.READY);
+          connRef.current = null;
+        }
+      }, 5000);
+
     } catch (err: any) {
       addLog(`Handshake failed: ${err.message || err}`, 'error');
       setStatus(ConnectionStatus.READY);
@@ -338,37 +335,6 @@ const App: React.FC = () => {
       status: 'sent',
       replyTo
     }]);
-  };
-
-  const handleEditMessage = (id: string, newContent: string) => {
-    if (!connRef.current || status !== ConnectionStatus.CONNECTED) return;
-    
-    // Send edit signal
-    connRef.current.send({
-      type: 'edit',
-      messageId: id,
-      content: newContent
-    });
-
-    // Update local state
-    setMessages(prev => prev.map(msg => 
-      msg.id === id ? { ...msg, content: newContent, isEdited: true } : msg
-    ));
-  };
-
-  const handleDeleteMessage = (id: string) => {
-    if (!connRef.current || status !== ConnectionStatus.CONNECTED) return;
-
-    // Send delete signal
-    connRef.current.send({
-      type: 'delete',
-      messageId: id
-    });
-
-    // Update local state
-    setMessages(prev => prev.map(msg => 
-      msg.id === id ? { ...msg, isDeleted: true } : msg
-    ));
   };
 
   const sendFile = (file: File) => {
@@ -544,8 +510,6 @@ const App: React.FC = () => {
            <ChatInterface 
              messages={messages} 
              onSendMessage={sendMessage}
-             onEditMessage={handleEditMessage}
-             onDeleteMessage={handleDeleteMessage}
              onSendFile={sendFile}
              onClearChat={clearChat}
              onTyping={handleTyping}
