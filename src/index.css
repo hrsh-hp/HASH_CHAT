@@ -1,0 +1,158 @@
+:root {
+  --terminal-green: #33ff33;
+  --terminal-dim: #1a801a;
+  --terminal-bg: #050505;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--terminal-bg);
+  color: var(--terminal-green);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base resets to override generic Vite/React defaults */
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  text-align: left;
+}
+
+button {
+  background: transparent;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+  border-left: 1px solid var(--terminal-dim);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--terminal-dim);
+  border: 1px solid #000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-green);
+}
+
+/* CRT Effects */
+@keyframes flicker {
+  0% { opacity: 0.99; }
+  5% { opacity: 0.95; }
+  10% { opacity: 0.98; }
+  15% { opacity: 0.94; }
+  20% { opacity: 0.98; }
+  25% { opacity: 0.95; }
+  30% { opacity: 0.98; }
+  35% { opacity: 0.96; }
+  40% { opacity: 0.98; }
+  45% { opacity: 0.94; }
+  50% { opacity: 0.98; }
+  55% { opacity: 0.93; }
+  60% { opacity: 0.99; }
+  65% { opacity: 0.93; }
+  70% { opacity: 1; }
+  75% { opacity: 0.96; }
+  80% { opacity: 0.94; }
+  85% { opacity: 0.97; }
+  90% { opacity: 0.95; }
+  95% { opacity: 0.99; }
+  100% { opacity: 0.94; }
+}
+
+.crt-flicker {
+  animation: flicker 0.3s infinite;
+}
+
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0.2)
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.6;
+}
+
+/* Glitch Text Effect */
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.glitch-text::before {
+  left: 2px;
+  text-shadow: -1px 0 #ff00c1;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim-1 5s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+  left: -2px;
+  text-shadow: -1px 0 #00fff9;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim-2 5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip: rect(30px, 9999px, 10px, 0); }
+  20% { clip: rect(80px, 9999px, 90px, 0); }
+  40% { clip: rect(10px, 9999px, 30px, 0); }
+  60% { clip: rect(60px, 9999px, 10px, 0); }
+  80% { clip: rect(90px, 9999px, 50px, 0); }
+  100% { clip: rect(20px, 9999px, 80px, 0); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip: rect(10px, 9999px, 80px, 0); }
+  20% { clip: rect(60px, 9999px, 10px, 0); }
+  40% { clip: rect(20px, 9999px, 60px, 0); }
+  60% { clip: rect(80px, 9999px, 10px, 0); }
+  80% { clip: rect(50px, 9999px, 30px, 0); }
+  100% { clip: rect(30px, 9999px, 10px, 0); }
+}
+
+.border-glow {
+  box-shadow: 0 0 15px rgba(51, 255, 51, 0.15), inset 0 0 10px rgba(51, 255, 51, 0.05);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(51, 255, 51, 0.7);
+}

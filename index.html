@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>#CHAT // P2P Link</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --terminal-bg: #050505;
+        --terminal-green: #33ff33;
+        --terminal-dim: #1a801a;
+      }
+      body {
+        background-color: var(--terminal-bg);
+        color: var(--terminal-green);
+        font-family: 'JetBrains Mono', monospace;
+        overflow: hidden; /* Prevent body scroll */
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #000; 
+        border: 1px solid #111;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1a801a; 
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #33ff33; 
+        box-shadow: 0 0 5px #33ff33;
+      }
+      
+      /* CRT Scanline Effect */
+      .scanline {
+        background: linear-gradient(
+          to bottom,
+          rgba(255,255,255,0),
+          rgba(255,255,255,0) 50%,
+          rgba(0,0,0,0.2) 50%,
+          rgba(0,0,0,0.2)
+        );
+        background-size: 100% 4px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 9999;
+      }
+      
+      .crt-flicker {
+        animation: flicker 0.15s infinite;
+      }
+
+      /* Glow Utilities */
+      .border-glow {
+        box-shadow: 0 0 5px rgba(51, 255, 51, 0.2), inset 0 0 5px rgba(51, 255, 51, 0.1);
+      }
+      .text-glow {
+        text-shadow: 0 0 5px rgba(51, 255, 51, 0.5);
+      }
+
+      /* Glitch Effect */
+      .glitch-text {
+        position: relative;
+      }
+      .glitch-text::before,
+      .glitch-text::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #050505;
+      }
+      .glitch-text::before {
+        left: 2px;
+        text-shadow: -1px 0 #ff00c1;
+        clip: rect(44px, 450px, 56px, 0);
+        animation: glitch-anim 5s infinite linear alternate-reverse;
+      }
+      .glitch-text::after {
+        left: -2px;
+        text-shadow: -1px 0 #00fff9;
+        clip: rect(44px, 450px, 56px, 0);
+        animation: glitch-anim2 5s infinite linear alternate-reverse;
+      }
+
+      @keyframes flicker {
+        0% { opacity: 0.98; }
+        50% { opacity: 1.0; }
+        100% { opacity: 0.99; }
+      }
+
+      @keyframes glitch-anim {
+        0% { clip: rect(31px, 9999px, 94px, 0); }
+        5% { clip: rect(70px, 9999px, 11px, 0); }
+        10% { clip: rect(26px, 9999px, 93px, 0); }
+        15% { clip: rect(9px, 9999px, 9px, 0); }
+        20% { clip: rect(69px, 9999px, 8px, 0); }
+        25% { clip: rect(8px, 9999px, 60px, 0); }
+        30% { clip: rect(6px, 9999px, 20px, 0); }
+        35% { clip: rect(83px, 9999px, 5px, 0); }
+        40% { clip: rect(2px, 9999px, 63px, 0); }
+        45% { clip: rect(10px, 9999px, 12px, 0); }
+        50% { clip: rect(76px, 9999px, 83px, 0); }
+        55% { clip: rect(62px, 9999px, 17px, 0); }
+        60% { clip: rect(67px, 9999px, 99px, 0); }
+        65% { clip: rect(10px, 9999px, 81px, 0); }
+        70% { clip: rect(90px, 9999px, 17px, 0); }
+        75% { clip: rect(30px, 9999px, 91px, 0); }
+        80% { clip: rect(47px, 9999px, 25px, 0); }
+        85% { clip: rect(79px, 9999px, 27px, 0); }
+        90% { clip: rect(10px, 9999px, 8px, 0); }
+        95% { clip: rect(96px, 9999px, 76px, 0); }
+        100% { clip: rect(21px, 9999px, 6px, 0); }
+      }
+      @keyframes glitch-anim2 {
+        0% { clip: rect(65px, 9999px, 100px, 0); }
+        100% { clip: rect(15px, 9999px, 5px, 0); }
+      }
+    </style>
+  <!-- <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "peerjs": "https://esm.sh/peerjs@^1.5.5",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
+  }
+}
+</script> -->
+</head>
+  <body>
+    <div id="root"></div>
+    <div class="scanline"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
