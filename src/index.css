@@ -1,17 +1,18 @@
 :root {
-  --terminal-green: #33ff33;
-  --terminal-dim: #1a801a;
+  --terminal-primary: #ffffff;
+  --terminal-dim: #888888;
   --terminal-bg: #050505;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
   background-color: var(--terminal-bg);
-  color: var(--terminal-green);
+  color: var(--terminal-primary);
   font-family: 'JetBrains Mono', 'Courier New', monospace;
   -webkit-font-smoothing: antialiased;
 }
@@ -50,32 +51,94 @@ button {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--terminal-green);
+  background: var(--terminal-primary);
 }
 
 /* CRT Effects */
 @keyframes flicker {
-  0% { opacity: 0.99; }
-  5% { opacity: 0.95; }
-  10% { opacity: 0.98; }
-  15% { opacity: 0.94; }
-  20% { opacity: 0.98; }
-  25% { opacity: 0.95; }
-  30% { opacity: 0.98; }
-  35% { opacity: 0.96; }
-  40% { opacity: 0.98; }
-  45% { opacity: 0.94; }
-  50% { opacity: 0.98; }
-  55% { opacity: 0.93; }
-  60% { opacity: 0.99; }
-  65% { opacity: 0.93; }
-  70% { opacity: 1; }
-  75% { opacity: 0.96; }
-  80% { opacity: 0.94; }
-  85% { opacity: 0.97; }
-  90% { opacity: 0.95; }
-  95% { opacity: 0.99; }
-  100% { opacity: 0.94; }
+  0% {
+    opacity: 0.99;
+  }
+
+  5% {
+    opacity: 0.95;
+  }
+
+  10% {
+    opacity: 0.98;
+  }
+
+  15% {
+    opacity: 0.94;
+  }
+
+  20% {
+    opacity: 0.98;
+  }
+
+  25% {
+    opacity: 0.95;
+  }
+
+  30% {
+    opacity: 0.98;
+  }
+
+  35% {
+    opacity: 0.96;
+  }
+
+  40% {
+    opacity: 0.98;
+  }
+
+  45% {
+    opacity: 0.94;
+  }
+
+  50% {
+    opacity: 0.98;
+  }
+
+  55% {
+    opacity: 0.93;
+  }
+
+  60% {
+    opacity: 0.99;
+  }
+
+  65% {
+    opacity: 0.93;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 0.96;
+  }
+
+  80% {
+    opacity: 0.94;
+  }
+
+  85% {
+    opacity: 0.97;
+  }
+
+  90% {
+    opacity: 0.95;
+  }
+
+  95% {
+    opacity: 0.99;
+  }
+
+  100% {
+    opacity: 0.94;
+  }
 }
 
 .crt-flicker {
@@ -88,13 +151,11 @@ button {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0) 50%,
-    rgba(0, 0, 0, 0.2) 50%,
-    rgba(0, 0, 0, 0.2)
-  );
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0) 50%,
+      rgba(0, 0, 0, 0.2) 50%,
+      rgba(0, 0, 0, 0.2));
   background-size: 100% 4px;
   pointer-events: none;
   z-index: 1000;
@@ -132,27 +193,61 @@ button {
 }
 
 @keyframes glitch-anim-1 {
-  0% { clip: rect(30px, 9999px, 10px, 0); }
-  20% { clip: rect(80px, 9999px, 90px, 0); }
-  40% { clip: rect(10px, 9999px, 30px, 0); }
-  60% { clip: rect(60px, 9999px, 10px, 0); }
-  80% { clip: rect(90px, 9999px, 50px, 0); }
-  100% { clip: rect(20px, 9999px, 80px, 0); }
+  0% {
+    clip: rect(30px, 9999px, 10px, 0);
+  }
+
+  20% {
+    clip: rect(80px, 9999px, 90px, 0);
+  }
+
+  40% {
+    clip: rect(10px, 9999px, 30px, 0);
+  }
+
+  60% {
+    clip: rect(60px, 9999px, 10px, 0);
+  }
+
+  80% {
+    clip: rect(90px, 9999px, 50px, 0);
+  }
+
+  100% {
+    clip: rect(20px, 9999px, 80px, 0);
+  }
 }
 
 @keyframes glitch-anim-2 {
-  0% { clip: rect(10px, 9999px, 80px, 0); }
-  20% { clip: rect(60px, 9999px, 10px, 0); }
-  40% { clip: rect(20px, 9999px, 60px, 0); }
-  60% { clip: rect(80px, 9999px, 10px, 0); }
-  80% { clip: rect(50px, 9999px, 30px, 0); }
-  100% { clip: rect(30px, 9999px, 10px, 0); }
+  0% {
+    clip: rect(10px, 9999px, 80px, 0);
+  }
+
+  20% {
+    clip: rect(60px, 9999px, 10px, 0);
+  }
+
+  40% {
+    clip: rect(20px, 9999px, 60px, 0);
+  }
+
+  60% {
+    clip: rect(80px, 9999px, 10px, 0);
+  }
+
+  80% {
+    clip: rect(50px, 9999px, 30px, 0);
+  }
+
+  100% {
+    clip: rect(30px, 9999px, 10px, 0);
+  }
 }
 
 .border-glow {
-  box-shadow: 0 0 15px rgba(51, 255, 51, 0.15), inset 0 0 10px rgba(51, 255, 51, 0.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.08), inset 0 0 10px rgba(255, 255, 255, 0.03);
 }
 
 .text-glow {
-  text-shadow: 0 0 10px rgba(51, 255, 51, 0.7);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }

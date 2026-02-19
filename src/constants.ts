@@ -1,7 +1,7 @@
 export const TERMINAL_COLORS = {
   bg: '#050505',
-  primary: '#33ff33',
-  dim: '#1a801a',
+  primary: '#ffffff',
+  dim: '#888888',
   alert: '#ff3333',
   warning: '#ffcc00'
 };

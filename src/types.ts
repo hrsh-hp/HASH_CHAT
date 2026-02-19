@@ -23,6 +23,7 @@ export interface Message {
   replyTo?: ReplyContext;
   isEdited?: boolean;
   isDeleted?: boolean;
+  groupId?: string; // Groups multiple files sent at once
 }
 
 export const ConnectionStatus = {

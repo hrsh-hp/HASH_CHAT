@@ -26,50 +26,50 @@ export const LogPanel: React.FC<LogPanelProps> = ({ logs, onClear }) => {
   };
 
   return (
-    <div className="flex-1 border border-[#1a801a] bg-black flex flex-col relative overflow-hidden h-full shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
-       {/* Header */}
-       <div className="flex items-center justify-between bg-[#1a801a]/10 border-b border-[#1a801a] px-3 py-2 shrink-0">
-          <div className="flex items-center gap-2 text-[#1a801a]">
-            <Terminal size={14} />
-            <span className="text-xs font-bold uppercase tracking-widest">System Log</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={handleDownload}
-              className="text-[#1a801a] hover:text-[#33ff33] transition-colors"
-              title="Export Logs"
-            >
-              <Save size={14} />
-            </button>
-            <button 
-              onClick={onClear}
-              className="text-[#1a801a] hover:text-red-500 transition-colors"
-              title="Clear Logs"
-            >
-              <Trash2 size={14} />
-            </button>
-          </div>
-       </div>
+    <div className="flex-1 border border-[#888888] bg-black flex flex-col relative overflow-hidden h-full shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
+      {/* Header */}
+      <div className="flex items-center justify-between bg-[#888888]/10 border-b border-[#888888] px-3 py-2 shrink-0">
+        <div className="flex items-center gap-2 text-[#888888]">
+          <Terminal size={14} />
+          <span className="text-xs font-bold uppercase tracking-widest">System Log</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleDownload}
+            className="text-[#888888] hover:text-white transition-colors"
+            title="Export Logs"
+          >
+            <Save size={14} />
+          </button>
+          <button
+            onClick={onClear}
+            className="text-[#888888] hover:text-red-500 transition-colors"
+            title="Clear Logs"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      </div>
 
-      {/* Log Content - min-h-0 is crucial for flex child scrolling */}
+      {/* Log Content */}
       <div className="flex-1 min-h-0 overflow-y-auto p-3 font-mono text-xs space-y-1 custom-scrollbar">
         {logs.length === 0 && (
-          <div className="text-[#1a801a]/50 italic text-center mt-10">
+          <div className="text-[#888888]/50 italic text-center mt-10">
             -- NO SYSTEM EVENTS --
           </div>
         )}
-        
+
         {logs.map((log) => (
-          <div key={log.id} className="flex gap-2 group hover:bg-[#1a801a]/10 px-1 -mx-1 rounded">
-            <span className="text-[#1a801a] whitespace-nowrap opacity-60 font-thin shrink-0 select-none">
+          <div key={log.id} className="flex gap-2 group hover:bg-[#888888]/10 px-1 -mx-1 rounded">
+            <span className="text-[#888888] whitespace-nowrap opacity-60 font-thin shrink-0 select-none">
               {new Date(log.timestamp).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </span>
             <span className={`
               break-words leading-relaxed
               ${log.type === 'error' ? 'text-red-500 text-glow' : ''}
               ${log.type === 'warning' ? 'text-yellow-500' : ''}
-              ${log.type === 'success' ? 'text-[#33ff33]' : ''}
-              ${log.type === 'info' ? 'text-[#33ff33]/80' : ''}
+              ${log.type === 'success' ? 'text-white' : ''}
+              ${log.type === 'info' ? 'text-white/80' : ''}
             `}>
               {log.type === 'info' && <span className="opacity-50 mr-1">{'>'}</span>}
               {log.type === 'error' && <span className="mr-1">!!</span>}
@@ -78,9 +78,9 @@ export const LogPanel: React.FC<LogPanelProps> = ({ logs, onClear }) => {
           </div>
         ))}
         {/* Blinking Cursor at the end of logs */}
-        <div className="flex items-center text-[#33ff33] mt-2 opacity-80">
-            <span className="mr-1">{'>'}</span>
-            <span className="w-2 h-4 bg-[#33ff33] animate-pulse"></span>
+        <div className="flex items-center text-white mt-2 opacity-80">
+          <span className="mr-1">{'>'}</span>
+          <span className="w-2 h-4 bg-white animate-pulse"></span>
         </div>
         <div ref={endRef} />
       </div>

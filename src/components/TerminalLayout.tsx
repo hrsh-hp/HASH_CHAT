@@ -10,14 +10,14 @@ export const TerminalLayout: React.FC<TerminalLayoutProps> = ({ children }) => {
       <div className="max-w-[1800px] mx-auto w-full h-full flex-1 flex flex-col min-h-0">
         {children}
       </div>
-      
+
       {/* Background Grid Pattern (Pure CSS) */}
-      <div 
+      <div
         className="fixed inset-0 pointer-events-none -z-10 opacity-10"
         style={{
           backgroundImage: `
-            linear-gradient(to right, #33ff33 1px, transparent 1px),
-            linear-gradient(to bottom, #33ff33 1px, transparent 1px)
+            linear-gradient(to right, #ffffff 1px, transparent 1px),
+            linear-gradient(to bottom, #ffffff 1px, transparent 1px)
           `,
           backgroundSize: '40px 40px'
         }}
